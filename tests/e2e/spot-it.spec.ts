@@ -6,9 +6,17 @@ test("a correct symbol advances the shared race for another peer", async ({ brow
     storagePrefix: "mesh-spot-it",
   });
   try {
+    await expect(a.getByText("Find the one symbol shown on both cards, then select it.")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(b.getByText("Find the one symbol shown on both cards, then select it.")).toBeVisible({
+      timeout: 15_000,
+    });
     await a.getByLabel("Your display name").fill("Ari");
     await b.getByLabel("Your display name").fill("Bea");
-    await a.getByRole("button", { name: "Card A symbol ☀" }).click();
+    const match = a.getByRole("button", { name: "Card A symbol ☀" });
+    await expect(match).toBeEnabled();
+    await match.click();
     await expect(b.getByText(/Ari spotted the last match/i)).toBeVisible({ timeout: 10_000 });
     await expect(b.getByText("Ari", { exact: true })).toBeVisible();
   } finally {
